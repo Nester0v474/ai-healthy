@@ -1,0 +1,8 @@
+package com.example.airich.ui.healthy
+
+data class ChatMessage(
+    val text: String,
+    val isFromUser: Boolean,
+    val timestamp: Long = System.currentTimeMillis()
+)
+

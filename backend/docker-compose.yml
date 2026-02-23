@@ -1,0 +1,21 @@
+# Я описываю контейнеры для запуска через Docker Compose
+version: '3.8'
+
+services:
+  healthy-backend:
+    build: .
+    container_name: healthy-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+    restart: unless-stopped
+    networks:
+      - healthy-network
+
+networks:
+  healthy-network:
+    driver: bridge
+

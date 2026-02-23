@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Главный экран: градиентный фон, карточка чата, боковое меню -->
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainDrawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Я показываю контент с градиентным фоном -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_lg"
+        android:background="@drawable/bg_main_gradient">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ai Healthy"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:letterSpacing="0.02"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ваш персональный помощник по здоровью"
+            android:textSize="14sp"
+            android:textColor="@color/primary_light"
+            android:alpha="0.9"
+            android:layout_marginBottom="@dimen/spacing_lg" />
+
+        <!-- Карточка превью последнего сообщения чата -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardLastMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_md"
+            app:cardBackgroundColor="@color/surface_light"
+            app:cardCornerRadius="@dimen/radius_lg"
+            app:cardElevation="@dimen/card_elevation"
+            app:cardUseCompatPadding="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_md">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Последний диалог с Healthy"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/primary"
+                    android:layout_marginBottom="@dimen/spacing_sm" />
+
+                <TextView
+                    android:id="@+id/tvLastChatMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Начните диалог с Healthy"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary"
+                    android:maxLines="3"
+                    android:ellipsize="end"
+                    android:textIsSelectable="true" />
+
+                <TextView
+                    android:id="@+id/tvLastChatTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text=""
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="@dimen/spacing_sm" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/tvSwipeHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="← Свайп влево для меню"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:alpha="0.6"
+            android:layout_marginTop="@dimen/spacing_sm" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnAccount"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:contentDescription="Аккаунт"
+                android:src="@drawable/ic_account"
+                app:tint="@color/white" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Боковое меню с разделами приложения -->
+    <ScrollView
+        android:id="@+id/drawerMenu"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@color/surface_light">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Разделы"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="@dimen/spacing_md" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHope"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Healthy — AI врач"
+                android:textSize="15sp"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                android:minHeight="@dimen/button_min_height"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="@dimen/radius_md"
+                app:icon="@android:drawable/ic_menu_help"
+                app:iconTint="@color/white"
+                app:iconSize="22dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFoodTracker"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Трекер питания"
+                android:textSize="15sp"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                android:minHeight="@dimen/button_min_height"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="@dimen/radius_md"
+                app:icon="@android:drawable/ic_menu_edit"
+                app:iconTint="@color/white"
+                app:iconSize="22dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnMoodTracker"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Дневник настроения"
+                android:textSize="15sp"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                android:minHeight="@dimen/button_min_height"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="@dimen/radius_md"
+                app:icon="@android:drawable/ic_menu_myplaces"
+                app:iconTint="@color/white"
+                app:iconSize="22dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHabitTracker"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Трекер привычек"
+                android:textSize="15sp"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                android:minHeight="@dimen/button_min_height"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="@dimen/radius_md"
+                app:icon="@android:drawable/ic_menu_agenda"
+                app:iconTint="@color/white"
+                app:iconSize="22dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnReminders"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Напоминания"
+                android:textSize="15sp"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                android:minHeight="@dimen/button_min_height"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="@dimen/radius_md"
+                app:icon="@android:drawable/ic_menu_my_calendar"
+                app:iconTint="@color/white"
+                app:iconSize="22dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSleepDiary"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Дневник сна"
+                android:textSize="15sp"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                android:minHeight="@dimen/button_min_height"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="@dimen/radius_md"
+                app:icon="@android:drawable/ic_menu_recent_history"
+                app:iconTint="@color/white"
+                app:iconSize="22dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHopeTracker"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ежедневник задач"
+                android:textSize="15sp"
+                android:minHeight="@dimen/button_min_height"
+                app:backgroundTint="@color/primary"
+                app:cornerRadius="@dimen/radius_md"
+                app:icon="@android:drawable/ic_menu_agenda"
+                app:iconTint="@color/white"
+                app:iconSize="22dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.drawerlayout.widget.DrawerLayout>

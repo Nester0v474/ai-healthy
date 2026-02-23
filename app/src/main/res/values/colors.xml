@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Моя палитра цветов для премиального дизайна -->
+<resources>
+    <!-- Базовые -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <!-- Основные: бирюза (здоровье), акцент золотой -->
+    <color name="primary">#0D9488</color>
+    <color name="primary_dark">#0F766E</color>
+    <color name="primary_light">#14B8A6</color>
+    <color name="accent">#F59E0B</color>
+    <color name="accent_light">#FBBF24</color>
+    
+    <!-- Фоны -->
+    <color name="background_dark">#0F172A</color>
+    <color name="background_card">#F8FAFC</color>
+    <color name="surface_light">#FFFFFF</color>
+    <color name="surface_elevated">#FFFFFF</color>
+    
+    <!-- Градиент основной (от тёмного к primary) -->
+    <color name="gradient_start">#0F172A</color>
+    <color name="gradient_mid">#1E3A5F</color>
+    <color name="gradient_end">#0D9488</color>
+    
+    <!-- Текст -->
+    <color name="text_primary">#0F172A</color>
+    <color name="text_secondary">#64748B</color>
+    <color name="text_on_primary">#FFFFFF</color>
+    
+    <!-- Легаси (для совместимости) -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+</resources>
