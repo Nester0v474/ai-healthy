@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Моя тема приложения: бирюзовый primary, тёмный фон -->
+
 <resources>
     <style name="Theme.AiHealthy" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>

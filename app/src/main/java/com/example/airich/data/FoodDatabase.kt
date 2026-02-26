@@ -34,11 +34,11 @@ abstract class FoodDatabase : RoomDatabase() {
     abstract fun habitCompletionDao(): HabitCompletionDao
     abstract fun reminderDao(): ReminderDao
     abstract fun sleepEntryDao(): SleepEntryDao
-    
+
     companion object {
         @Volatile
         private var INSTANCE: FoodDatabase? = null
-        
+
         fun getDatabase(context: Context): FoodDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = INSTANCE ?: run {
@@ -49,7 +49,7 @@ abstract class FoodDatabase : RoomDatabase() {
                             FoodDatabase::class.java,
                             "food_database"
                         )
-                            .fallbackToDestructiveMigration() // Для демо-версии
+                            .fallbackToDestructiveMigration()
                             .build()
                     } catch (e: Exception) {
                         android.util.Log.e("FoodDatabase", "Ошибка создания базы данных", e)
@@ -63,4 +63,3 @@ abstract class FoodDatabase : RoomDatabase() {
         }
     }
 }
-

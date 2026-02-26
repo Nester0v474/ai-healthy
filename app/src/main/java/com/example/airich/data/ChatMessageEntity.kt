@@ -7,11 +7,10 @@ import androidx.room.PrimaryKey
 data class ChatMessageEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    
+
     val text: String,
-    
+
     val isFromUser: Boolean,
-    
+
     val timestamp: Long = System.currentTimeMillis()
 )
-

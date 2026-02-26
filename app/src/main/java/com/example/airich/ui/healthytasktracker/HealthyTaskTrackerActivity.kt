@@ -6,11 +6,11 @@ import androidx.fragment.app.commit
 import com.example.airich.R
 
 class HealthyTaskTrackerActivity : AppCompatActivity() {
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_healthy_task_tracker)
-        
+
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
                 replace(R.id.fragmentContainer, HealthyTaskLogFragment())
@@ -19,4 +19,3 @@ class HealthyTaskTrackerActivity : AppCompatActivity() {
         }
     }
 }
-

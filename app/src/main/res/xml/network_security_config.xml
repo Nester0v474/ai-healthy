@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Разрешаем HTTP для локальной разработки -->
-    <!-- Разрешаем все локальные IP адреса для разработки -->
+    
+    
     <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
             <certificates src="system" />

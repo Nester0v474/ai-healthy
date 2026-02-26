@@ -9,7 +9,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-// Я настраиваю Retrofit для запросов к моему backend
 object DeepSeekService {
     private const val PREFS_NAME = "app_prefs"
     private const val KEY_BACKEND_HOST = "backend_url_override"
@@ -17,7 +16,6 @@ object DeepSeekService {
     private fun prefs(context: Context) =
         context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    /** Возвращает базовый URL: из настроек (IP в приложении) или из BuildConfig. */
     fun getBaseUrl(context: Context): String {
         val prefs = prefs(context)
         val override = prefs.getString(KEY_BACKEND_HOST, null)?.trim()
@@ -33,11 +31,10 @@ object DeepSeekService {
         }
     }
 
-    /** Сохранить IP/host сервера (например 192.168.0.105). Передать null — сбросить на значение по умолчанию. */
     fun setBackendHost(context: Context, host: String?) {
         prefs(context).edit()
             .putString(KEY_BACKEND_HOST, host?.trim()?.takeIf { it.isNotEmpty() })
-            .commit() // commit() чтобы в release следующий запрос точно увидел новый IP
+            .commit()
         cachedBaseUrl = null
         cachedApi = null
     }
@@ -46,7 +43,6 @@ object DeepSeekService {
         return prefs(context).getString(KEY_BACKEND_HOST, null)?.trim()?.takeIf { it.isNotEmpty() }
     }
 
-    /** Адрес по умолчанию из сборки (например 89.169.46.180). */
     fun getDefaultHost(): String {
         val url = BuildConfig.BACKEND_URL.trimEnd('/')
         return when {
@@ -76,7 +72,6 @@ object DeepSeekService {
             .build()
     }
 
-    /** API с учётом настроек (IP из приложения или из BuildConfig). */
     fun getApi(context: Context): DeepSeekApi {
         val url = getBaseUrl(context)
         if (url != cachedBaseUrl) {
@@ -91,7 +86,6 @@ object DeepSeekService {
         cachedApi = null
     }
 
-    /** Проверяет, доступен ли сервер (GET /health). */
     fun checkServerReachable(context: Context): Boolean {
         return try {
             val url = getBaseUrl(context) + "health"

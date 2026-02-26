@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Экран чата с Healthy: заголовок, список сообщений, поле ввода -->
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:background="@color/background_card">
 
-    <!-- Заголовок -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
 
     </LinearLayout>
 
-    <!-- Список сообщений -->
+    
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMessages"
         android:layout_width="match_parent"
@@ -43,7 +43,7 @@
         android:paddingBottom="8dp"
         android:clipToPadding="false" />
 
-    <!-- Индикатор печати -->
+    
     <TextView
         android:id="@+id/tvTyping"
         android:layout_width="wrap_content"
@@ -57,7 +57,7 @@
         android:paddingBottom="4dp"
         android:visibility="gone" />
 
-    <!-- Поле ввода и кнопка отправки -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -14,35 +14,29 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-/**
- * Сервис для получения статистики пользователя для AI-анализа
- */
 class UserStatsService(private val context: Context) {
-    
+
     private val database = FoodDatabase.getDatabase(context)
     private val moodDao: MoodEntryDao = database.moodEntryDao()
     private val mealDao: MealEntryDao = database.mealEntryDao()
     private val taskDao: HealthyTaskEntryDao = database.healthyTaskEntryDao()
     private val sleepDao: SleepEntryDao = database.sleepEntryDao()
-    
-    /**
-     * Получает статистику настроения за последние дни
-     */
+
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getMoodStats(days: Int = 7): String = withContext(Dispatchers.IO) {
         try {
             val endDate = LocalDate.now()
             val startDate = endDate.minusDays(days.toLong())
-            
+
             val moodEntries = moodDao.getMoodEntriesForDateRange(startDate, endDate).first()
-            
+
             if (moodEntries.isEmpty()) {
                 return@withContext "Нет данных о настроении за последние $days дней."
             }
-            
+
             val avgMood = moodEntries.map { it.moodScore }.average()
             val moodCount = moodEntries.size
-            
+
             val moodTrend = when {
                 moodEntries.size >= 2 -> {
                     val recent = moodEntries.takeLast(3).map { it.moodScore }.average()
@@ -55,10 +49,10 @@ class UserStatsService(private val context: Context) {
                 }
                 else -> "недостаточно данных"
             }
-            
+
             val lastMood = moodEntries.last()
             val lastMoodDate = lastMood.date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault()))
-            
+
             buildString {
                 append("Статистика настроения за последние $days дней:\n")
                 append("- Средний балл настроения: ${String.format("%.1f", avgMood)}/5\n")
@@ -73,51 +67,43 @@ class UserStatsService(private val context: Context) {
             "Ошибка получения данных о настроении."
         }
     }
-    
-    /**
-     * Получает статистику питания за последние дни
-     */
+
     suspend fun getFoodStats(days: Int = 7): String = withContext(Dispatchers.IO) {
         try {
             val endOfDay = System.currentTimeMillis()
             val startOfDay = endOfDay - (days * 24 * 60 * 60 * 1000L)
-            
-            // Получаем записи с информацией о продуктах
+
             val mealEntriesWithFood = mealDao.getMealEntriesWithFoodForDay(startOfDay, endOfDay).first()
-            
+
             if (mealEntriesWithFood.isEmpty()) {
                 return@withContext "Нет данных о питании за последние $days дней."
             }
-            
-            // Группируем по дням
-            val mealsByDay = mealEntriesWithFood.groupBy { 
+
+            val mealsByDay = mealEntriesWithFood.groupBy {
                 java.util.Date(it.mealEntry.date).let { date ->
                     java.text.SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(date)
                 }
             }
-            
-            // Подсчитываем популярные продукты
+
             val foodFrequency = mealEntriesWithFood
                 .groupBy { it.foodItem.name }
                 .mapValues { it.value.size }
                 .toList()
                 .sortedByDescending { it.second }
                 .take(10)
-            
+
             val totalMeals = mealEntriesWithFood.size
             val daysWithMeals = mealsByDay.size
             val uniqueFoods = mealEntriesWithFood.map { it.foodItem.name }.distinct().size
-            
-            // Подсчитываем общие калории
+
             val totalCalories = mealEntriesWithFood.sumOf { it.totalCalories.toLong() }
             val avgCaloriesPerDay = if (daysWithMeals > 0) totalCalories / daysWithMeals else 0
-            
-            // Получаем последнюю запись
+
             val lastMeal = mealEntriesWithFood.maxByOrNull { it.mealEntry.date }
             val lastMealDate = lastMeal?.let {
                 java.text.SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(java.util.Date(it.mealEntry.date))
             } ?: "нет данных"
-            
+
             buildString {
                 append("Статистика питания за последние $days дней:\n")
                 append("- Всего приемов пищи: $totalMeals\n")
@@ -135,7 +121,7 @@ class UserStatsService(private val context: Context) {
                     append(" ($mealType: ${it.foodItem.name})\n")
                 } ?: append("\n")
                 append("\n")
-                
+
                 if (foodFrequency.isNotEmpty()) {
                     append("Наиболее часто употребляемые продукты:\n")
                     foodFrequency.take(5).forEachIndexed { index, (foodName, count) ->
@@ -143,18 +129,17 @@ class UserStatsService(private val context: Context) {
                     }
                     append("\n")
                 }
-                
-                // Детальная информация о приемах пищи по датам
+
                 if (mealsByDay.isNotEmpty()) {
                     append("Детальная информация о приемах пищи по датам:\n")
-                    val sortedEntries = mealsByDay.entries.toList().sortedByDescending { it.key } // Новые даты сначала
+                    val sortedEntries = mealsByDay.entries.toList().sortedByDescending { it.key }
                     sortedEntries.forEach { entry ->
                         val date = entry.key
                         val meals = entry.value
                         append("\n$date:\n")
-                        // Группируем по типу приема пищи
+
                         val mealsByType = meals.groupBy { it.mealEntry.mealType }
-                        
+
                         mealsByType.forEach { (mealType, typeMeals) ->
                             val mealTypeName = when (mealType) {
                                 MealType.BREAKFAST -> "Завтрак"
@@ -177,10 +162,7 @@ class UserStatsService(private val context: Context) {
             "Ошибка получения данных о питании."
         }
     }
-    
-    /**
-     * Получает статистику сна за последние дни
-     */
+
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getSleepStats(days: Int = 7): String = withContext(Dispatchers.IO) {
         try {
@@ -212,21 +194,18 @@ class UserStatsService(private val context: Context) {
         }
     }
 
-    /**
-     * Получает статистику задач за последние дни
-     */
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getTaskStats(days: Int = 7): String = withContext(Dispatchers.IO) {
         try {
             val endDate = LocalDate.now()
             val startDate = endDate.minusDays(days.toLong())
-            
+
             val taskEntries = taskDao.getHealthyTaskEntriesForDateRange(startDate, endDate).first()
-            
+
             if (taskEntries.isEmpty()) {
                 return@withContext "Нет данных о задачах за последние $days дней."
             }
-            
+
             val totalTasks = taskEntries.size
             val completedTasks = taskEntries.count { it.isCompleted }
             val activeTasks = totalTasks - completedTasks
@@ -235,18 +214,15 @@ class UserStatsService(private val context: Context) {
             } else {
                 0
             }
-            
-            // Группируем по дням
+
             val tasksByDay = taskEntries.groupBy { it.date }
-            
-            // Получаем активные задачи
+
             val activeTaskEntries = taskDao.getActiveHealthyTaskEntries().first()
             val activeTasksList = activeTaskEntries.take(5)
-            
-            // Получаем последние выполненные задачи
+
             val completedTaskEntries = taskDao.getCompletedHealthyTaskEntries().first()
             val recentCompleted = completedTaskEntries.take(5)
-            
+
             buildString {
                 append("Статистика задач за последние $days дней:\n")
                 append("- Всего задач: $totalTasks\n")
@@ -254,7 +230,7 @@ class UserStatsService(private val context: Context) {
                 append("- Активных: $activeTasks\n")
                 append("- Процент выполнения: $completionRate%\n")
                 append("- Дней с задачами: ${tasksByDay.size}\n\n")
-                
+
                 if (activeTasksList.isNotEmpty()) {
                     append("Активные задачи:\n")
                     activeTasksList.forEachIndexed { index, task ->
@@ -265,7 +241,7 @@ class UserStatsService(private val context: Context) {
                     }
                     append("\n")
                 }
-                
+
                 if (recentCompleted.isNotEmpty()) {
                     append("Последние выполненные задачи:\n")
                     recentCompleted.take(3).forEachIndexed { index, task ->
@@ -279,10 +255,7 @@ class UserStatsService(private val context: Context) {
             "Ошибка получения данных о задачах."
         }
     }
-    
-    /**
-     * Получает полную статистику пользователя для AI
-     */
+
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getFullUserStats(): String = withContext(Dispatchers.IO) {
         buildString {
@@ -298,4 +271,3 @@ class UserStatsService(private val context: Context) {
         }
     }
 }
-

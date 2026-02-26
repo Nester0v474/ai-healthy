@@ -1,4 +1,3 @@
-// Я описываю сборку приложения Ai Healthy
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -20,9 +19,7 @@ android {
         versionName = "1.0.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        
-        // URL сервера задаю в buildTypes ниже
-        
+
     }
 
     signingConfigs {
@@ -37,13 +34,13 @@ android {
         debug {
             signingConfig = signingConfigs.getByName("debugProject")
             buildConfigField("String", "BACKEND_URL", "\"http://89.169.46.180:3000/\"")
-            buildConfigField("boolean", "SUBSCRIPTION_ENABLED", "true") // в debug — триал/подписка включены
+            buildConfigField("boolean", "SUBSCRIPTION_ENABLED", "true")
             isMinifyEnabled = false
         }
         release {
             signingConfig = signingConfigs.getByName("debugProject")
             buildConfigField("String", "BACKEND_URL", "\"http://89.169.46.180:3000/\"")
-            buildConfigField("boolean", "SUBSCRIPTION_ENABLED", "true") // как в debug: экран входа, подписка/триал, аватар
+            buildConfigField("boolean", "SUBSCRIPTION_ENABLED", "true")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -78,45 +75,33 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    
-    // Room — для локальной БД
+
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
-    
-    // ViewModel and LiveData
+
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
-    
-    // Fragment
+
     implementation(libs.androidx.fragment.ktx)
-    
-    // RecyclerView
+
     implementation(libs.androidx.recyclerview)
-    
-    // CardView
+
     implementation(libs.androidx.cardview)
-    
-    // AppCompat
+
     implementation(libs.androidx.appcompat)
-    
-    // Coroutines
+
     implementation(libs.kotlinx.coroutines.android)
-    
-    // Material Design
+
     implementation(libs.material)
-    
-    // MPAndroidChart for mood graph
+
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-    
-    // Retrofit — я шлю запросы к моему backend
+
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    
-    
-    // Gson для сериализации
+
     implementation("com.google.code.gson:gson:2.10.1")
 
     testImplementation(libs.junit)

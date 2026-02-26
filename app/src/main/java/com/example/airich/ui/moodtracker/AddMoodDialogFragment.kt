@@ -12,13 +12,13 @@ import com.example.airich.databinding.DialogAddMoodBinding
 import com.google.android.material.button.MaterialButton
 
 class AddMoodDialogFragment : DialogFragment() {
-    
+
     private var _binding: DialogAddMoodBinding? = null
     private val binding get() = _binding!!
-    
+
     private var selectedMoodScore: Int? = null
     private var onSaveClick: ((Int, String?) -> Unit)? = null
-    
+
     companion object {
         fun newInstance(onSaveClick: (Int, String?) -> Unit): AddMoodDialogFragment {
             return AddMoodDialogFragment().apply {
@@ -26,13 +26,13 @@ class AddMoodDialogFragment : DialogFragment() {
             }
         }
     }
-    
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         return dialog
     }
-    
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,19 +41,16 @@ class AddMoodDialogFragment : DialogFragment() {
         _binding = DialogAddMoodBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        // Настройка кнопок настроения
+
         setupMoodButtons()
-        
-        // Кнопка отмены
+
         binding.btnCancel.setOnClickListener {
             dismiss()
         }
-        
-        // Кнопка сохранения
+
         binding.btnSave.setOnClickListener {
             val moodScore = selectedMoodScore
             if (moodScore != null) {
@@ -63,7 +60,7 @@ class AddMoodDialogFragment : DialogFragment() {
             }
         }
     }
-    
+
     private fun setupMoodButtons() {
         val buttons = listOf(
             binding.btnMood1 to 1,
@@ -72,7 +69,7 @@ class AddMoodDialogFragment : DialogFragment() {
             binding.btnMood4 to 4,
             binding.btnMood5 to 5
         )
-        
+
         val moodDescriptions = listOf(
             "Очень плохо",
             "Плохо",
@@ -80,38 +77,34 @@ class AddMoodDialogFragment : DialogFragment() {
             "Хорошо",
             "Отлично"
         )
-        
+
         buttons.forEachIndexed { index, (button, score) ->
-            // Устанавливаем начальное состояние (черный фон, белый текст)
+
             button.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.BLACK))
             button.setTextColor(android.graphics.Color.WHITE)
-            
+
             button.setOnClickListener {
-                // Сбрасываем выделение всех кнопок (черный фон, белый текст)
+
                 buttons.forEach { (btn, _) ->
                     btn.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.BLACK))
                     btn.setTextColor(android.graphics.Color.WHITE)
                     btn.isSelected = false
                 }
-                
-                // Выделяем выбранную кнопку (белый фон, черный текст)
+
                 button.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE))
                 button.setTextColor(android.graphics.Color.BLACK)
                 button.isSelected = true
                 selectedMoodScore = score
-                
-                // Обновляем текст выбранной оценки
+
                 binding.tvSelectedMood.text = moodDescriptions[index]
-                
-                // Активируем кнопку сохранения
+
                 binding.btnSave.isEnabled = true
             }
         }
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
-

@@ -12,10 +12,10 @@ import java.time.LocalDate
 interface HabitDao {
     @Query("SELECT * FROM habits ORDER BY id ASC")
     fun getAllHabits(): Flow<List<Habit>>
-    
+
     @Insert
     suspend fun insertHabit(habit: Habit): Long
-    
+
     @Query("DELETE FROM habits WHERE id = :id")
     suspend fun deleteHabit(id: Long)
 }
@@ -27,19 +27,19 @@ interface HabitCompletionDao {
 
     @Query("DELETE FROM habit_completions WHERE habitId = :habitId")
     suspend fun deleteCompletionsForHabit(habitId: Long)
-    
+
     @Query("SELECT * FROM habit_completions WHERE habitId = :habitId AND date >= :startDate ORDER BY date DESC")
     fun getCompletionsForHabit(habitId: Long, startDate: LocalDate): Flow<List<HabitCompletion>>
-    
+
     @Query("SELECT * FROM habit_completions WHERE date = :date")
     fun getCompletionsForDate(date: LocalDate): Flow<List<HabitCompletion>>
-    
+
     @Insert
     suspend fun insertCompletion(completion: HabitCompletion): Long
-    
+
     @Query("DELETE FROM habit_completions WHERE habitId = :habitId AND date = :date")
     suspend fun deleteCompletion(habitId: Long, date: LocalDate)
-    
+
     @Query("DELETE FROM habit_completions WHERE id = :id")
     suspend fun deleteCompletionById(id: Long)
 }

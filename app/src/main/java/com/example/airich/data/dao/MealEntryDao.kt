@@ -12,24 +12,23 @@ import kotlinx.coroutines.flow.Flow
 interface MealEntryDao {
     @Transaction
     @Query("""
-        SELECT * FROM meal_entries 
-        WHERE date >= :startOfDay AND date < :endOfDay 
+        SELECT * FROM meal_entries
+        WHERE date >= :startOfDay AND date < :endOfDay
         ORDER BY date DESC
     """)
     fun getMealEntriesForDay(startOfDay: Long, endOfDay: Long): Flow<List<MealEntry>>
-    
+
     @Transaction
     @Query("""
-        SELECT * FROM meal_entries 
-        WHERE date >= :startOfDay AND date < :endOfDay 
+        SELECT * FROM meal_entries
+        WHERE date >= :startOfDay AND date < :endOfDay
         ORDER BY date DESC
     """)
     fun getMealEntriesWithFoodForDay(startOfDay: Long, endOfDay: Long): Flow<List<MealEntryWithFood>>
-    
+
     @Insert
     suspend fun insertMealEntry(mealEntry: MealEntry): Long
-    
+
     @Query("DELETE FROM meal_entries WHERE id = :id")
     suspend fun deleteMealEntry(id: Long)
 }
-

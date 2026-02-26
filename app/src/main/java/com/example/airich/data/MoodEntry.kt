@@ -10,14 +10,13 @@ data class MoodEntry(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long = 0,
-    
+
     @ColumnInfo(name = "date")
     val date: LocalDate,
-    
+
     @ColumnInfo(name = "moodScore")
-    val moodScore: Int, // от 1 до 5
-    
+    val moodScore: Int,
+
     @ColumnInfo(name = "note")
     val note: String? = null
 )
-

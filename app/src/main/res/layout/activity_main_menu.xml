@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Главный экран: градиентный фон, карточка чата, боковое меню -->
+
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Я показываю контент с градиентным фоном -->
+    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,7 +34,7 @@
             android:alpha="0.9"
             android:layout_marginBottom="@dimen/spacing_lg" />
 
-        <!-- Карточка превью последнего сообщения чата -->
+        
         <androidx.cardview.widget.CardView
             android:id="@+id/cardLastMessage"
             android:layout_width="match_parent"
@@ -121,7 +121,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Боковое меню с разделами приложения -->
+    
     <ScrollView
         android:id="@+id/drawerMenu"
         android:layout_width="300dp"

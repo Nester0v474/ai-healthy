@@ -17,44 +17,42 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HealthyActivity : AppCompatActivity() {
-    
+
     companion object {
         private const val TAG = "HealthyActivity"
     }
-    
+
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var chatDao: ChatMessageDao
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate: starting")
-        
+
         try {
             setContentView(R.layout.activity_healthy)
             Log.d(TAG, "onCreate: layout set")
-            
+
             drawerLayout = findViewById(R.id.drawerLayout)
-            
-            // Инициализация базы данных
+
             val database = FoodDatabase.getDatabase(this)
             chatDao = database.chatMessageDao()
-            
-            // Обработчики для кнопок меню
+
             findViewById<android.widget.TextView>(R.id.tvSessionHistory).setOnClickListener {
                 showSessionHistory()
                 drawerLayout.closeDrawer(findViewById(R.id.rightDrawer))
             }
-            
+
             findViewById<android.widget.TextView>(R.id.tvHealthRecommendations).setOnClickListener {
                 showHealthRecommendations()
                 drawerLayout.closeDrawer(findViewById(R.id.rightDrawer))
             }
-            
+
             findViewById<android.widget.TextView>(R.id.tvChatSettings).setOnClickListener {
                 showChatSettings()
                 drawerLayout.closeDrawer(findViewById(R.id.rightDrawer))
             }
-            
+
             if (savedInstanceState == null) {
                 supportFragmentManager.commit {
                     replace(R.id.fragmentContainer, HealthyChatFragment())
@@ -67,7 +65,7 @@ class HealthyActivity : AppCompatActivity() {
             finish()
         }
     }
-    
+
     private fun showSessionHistory() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -94,7 +92,7 @@ class HealthyActivity : AppCompatActivity() {
             }
         }
     }
-    
+
     private fun showHealthRecommendations() {
         AlertDialog.Builder(this)
             .setTitle("Рекомендации по здоровью")
@@ -107,7 +105,7 @@ class HealthyActivity : AppCompatActivity() {
             .setPositiveButton("ОК", null)
             .show()
     }
-    
+
     private fun showChatSettings() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_chat_settings, null)
         val dialog = AlertDialog.Builder(this)
@@ -134,30 +132,29 @@ class HealthyActivity : AppCompatActivity() {
 
         dialog.show()
     }
-    
+
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart")
     }
-    
+
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume")
     }
-    
+
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause")
     }
-    
+
     override fun onStop() {
         super.onStop()
         Log.d(TAG, "onStop")
     }
-    
+
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy")
     }
 }
-

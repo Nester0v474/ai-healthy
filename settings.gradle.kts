@@ -23,4 +23,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Ai rich"
 include(":app")
- 

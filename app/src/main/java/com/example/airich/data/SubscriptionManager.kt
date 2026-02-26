@@ -4,9 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.example.airich.BuildConfig
 
-/**
- * Управление подпиской: 2 недели бесплатно, далее Premium.
- */
 class SubscriptionManager(private val context: Context) {
 
     private val prefs: SharedPreferences =
@@ -17,7 +14,7 @@ class SubscriptionManager(private val context: Context) {
         private const val KEY_SUBSCRIPTION_ACTIVE = "subscription_active"
         private const val KEY_SUBSCRIPTION_EXPIRES = "subscription_expires"
         private const val FREE_TRIAL_DAYS = 14L
-        private const val SUBSCRIPTION_PRICE = 130 // рублей в месяц
+        private const val SUBSCRIPTION_PRICE = 130
 
         private val DEV_MODE = BuildConfig.DEBUG
         private val SUBSCRIPTION_ENABLED = BuildConfig.SUBSCRIPTION_ENABLED
@@ -25,7 +22,7 @@ class SubscriptionManager(private val context: Context) {
 
     fun initialize() {
         if (!prefs.contains(KEY_FIRST_LAUNCH)) {
-            // Запоминаю время первого запуска (начало триала)
+
             prefs.edit()
                 .putLong(KEY_FIRST_LAUNCH, System.currentTimeMillis())
                 .apply()
@@ -33,21 +30,19 @@ class SubscriptionManager(private val context: Context) {
     }
 
     fun isSubscriptionActive(): Boolean {
-        if (!SUBSCRIPTION_ENABLED) return true // release без подписки — полный доступ
+        if (!SUBSCRIPTION_ENABLED) return true
         if (DEV_MODE) return true
 
-        // Проверяем активную подписку
         if (prefs.getBoolean(KEY_SUBSCRIPTION_ACTIVE, false)) {
             val expiresAt = prefs.getLong(KEY_SUBSCRIPTION_EXPIRES, 0)
             if (expiresAt > System.currentTimeMillis()) {
                 return true
             } else {
-                // Подписка просрочена — сбрасываю
+
                 prefs.edit().putBoolean(KEY_SUBSCRIPTION_ACTIVE, false).apply()
             }
         }
 
-        // Проверяем бесплатный период
         val firstLaunch = prefs.getLong(KEY_FIRST_LAUNCH, 0)
         if (firstLaunch == 0L) return false
 
@@ -107,4 +102,3 @@ class SubscriptionManager(private val context: Context) {
         return System.currentTimeMillis() < freeTrialEnd
     }
 }
-

@@ -19,12 +19,12 @@ import com.example.airich.viewmodel.FoodViewModelFactory
 import kotlinx.coroutines.launch
 
 class AddFoodFragment : Fragment() {
-    
+
     private var _binding: FragmentAddFoodBinding? = null
     private val binding get() = _binding!!
-    
+
     private lateinit var viewModel: FoodViewModel
-    
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,25 +33,24 @@ class AddFoodFragment : Fragment() {
         _binding = FragmentAddFoodBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         try {
             val context = requireContext().applicationContext
-            // Инициализация ViewModel
+
             val database = FoodDatabase.getDatabase(context)
             val repository = FoodRepository(database)
             val factory = FoodViewModelFactory(repository)
             viewModel = ViewModelProvider(this, factory)[FoodViewModel::class.java]
         } catch (e: Exception) {
-            // Обработка ошибок инициализации
+
             android.util.Log.e("AddFoodFragment", "Ошибка инициализации", e)
             android.util.Log.e("AddFoodFragment", "Stack trace", e)
             return
         }
-        
-        // Настройка Spinner для времени приема пищи
+
         val mealTypes = MealType.values().map { getMealTypeName(it) }
         val mealTypeAdapter = ArrayAdapter(
             requireContext(),
@@ -60,8 +59,7 @@ class AddFoodFragment : Fragment() {
         )
         mealTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerMealType.adapter = mealTypeAdapter
-        
-        // Настройка Spinner для типа приема пищи (категории)
+
         val categories = FoodCategory.values().map { getFoodCategoryName(it) }
         val categoryAdapter = ArrayAdapter(
             requireContext(),
@@ -70,17 +68,15 @@ class AddFoodFragment : Fragment() {
         )
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerFoodCategory.adapter = categoryAdapter
-        
-        // Кнопка добавления
+
         binding.btnAddMeal.setOnClickListener {
-            // Валидация названия продукта
+
             val foodName = binding.etFoodName.text?.toString()?.trim() ?: ""
             if (foodName.isBlank()) {
                 binding.etFoodName.error = "Введите название продукта"
                 return@setOnClickListener
             }
-            
-            // Валидация калорий
+
             val caloriesText = binding.etCalories.text?.toString() ?: ""
             if (caloriesText.isBlank()) {
                 binding.etCalories.error = "Введите калории"
@@ -92,8 +88,7 @@ class AddFoodFragment : Fragment() {
                 binding.etCalories.error = "Некорректное число"
                 return@setOnClickListener
             }
-            
-            // Валидация белков
+
             val proteinText = binding.etProtein.text?.toString() ?: "0"
             val protein = try {
                 proteinText.toDouble()
@@ -101,8 +96,7 @@ class AddFoodFragment : Fragment() {
                 binding.etProtein.error = "Некорректное число"
                 return@setOnClickListener
             }
-            
-            // Валидация углеводов
+
             val carbsText = binding.etCarbs.text?.toString() ?: "0"
             val carbs = try {
                 carbsText.toDouble()
@@ -110,8 +104,7 @@ class AddFoodFragment : Fragment() {
                 binding.etCarbs.error = "Некорректное число"
                 return@setOnClickListener
             }
-            
-            // Валидация жиров
+
             val fatText = binding.etFat.text?.toString() ?: "0"
             val fat = try {
                 fatText.toDouble()
@@ -119,8 +112,7 @@ class AddFoodFragment : Fragment() {
                 binding.etFat.error = "Некорректное число"
                 return@setOnClickListener
             }
-            
-            // Валидация количества
+
             val amountText = binding.etAmount.text?.toString() ?: ""
             if (amountText.isBlank()) {
                 binding.etAmount.error = "Введите количество"
@@ -132,20 +124,18 @@ class AddFoodFragment : Fragment() {
                 binding.etAmount.error = "Некорректное число"
                 return@setOnClickListener
             }
-            
+
             if (amount <= 0) {
                 binding.etAmount.error = "Количество должно быть больше 0"
                 return@setOnClickListener
             }
-            
-            // Получаем выбранные значения
+
             val selectedMealTypeIndex = binding.spinnerMealType.selectedItemPosition
             val mealType = MealType.values()[selectedMealTypeIndex]
-            
-            // Создаем или находим продукт и добавляем запись
+
             viewLifecycleOwner.lifecycleScope.launch {
                 try {
-                    // Создаем новый продукт
+
                     val foodItem = FoodItem(
                         name = foodName,
                         caloriesPer100g = calories,
@@ -153,14 +143,11 @@ class AddFoodFragment : Fragment() {
                         carbs = carbs,
                         fat = fat
                     )
-                    
-                    // Сохраняем продукт в базу и получаем его ID
+
                     val foodId = viewModel.insertFoodItem(foodItem)
-                    
-                    // Добавляем запись о приеме пищи
+
                     viewModel.addMealEntry(foodId, mealType, amount)
-                    
-                    // Возврат на главный экран
+
                     (activity as? FoodTrackerActivity)?.showFoodLogFragment()
                 } catch (e: Exception) {
                     android.util.Log.e("AddFoodFragment", "Ошибка при добавлении еды", e)
@@ -168,7 +155,7 @@ class AddFoodFragment : Fragment() {
             }
         }
     }
-    
+
     private fun getMealTypeName(mealType: MealType): String {
         return when (mealType) {
             MealType.BREAKFAST -> "Завтрак"
@@ -177,7 +164,7 @@ class AddFoodFragment : Fragment() {
             MealType.SNACK -> "Перекус"
         }
     }
-    
+
     private fun getFoodCategoryName(category: FoodCategory): String {
         return when (category) {
             FoodCategory.FRUITS -> "Фрукты"
@@ -186,10 +173,9 @@ class AddFoodFragment : Fragment() {
             FoodCategory.DISHES -> "Блюда"
         }
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
-

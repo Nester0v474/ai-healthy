@@ -71,17 +71,14 @@ class HealthyChatFragment : Fragment() {
                 return
             }
 
-            // Инициализация базы данных и подписки
             val database = FoodDatabase.getDatabase(requireContext())
             chatDao = database.chatMessageDao()
             subscriptionManager = SubscriptionManager(requireContext())
             subscriptionManager.initialize()
             userStatsService = UserStatsService(requireContext())
 
-            // Загружаем сохраненные сообщения
             loadSavedMessages()
 
-            // Настройка RecyclerView
             val context = view.context
             adapter = ChatAdapter()
             binding.rvMessages.layoutManager = LinearLayoutManager(context).apply {
@@ -89,7 +86,6 @@ class HealthyChatFragment : Fragment() {
             }
             binding.rvMessages.adapter = adapter
 
-            // Автоматический скролл к последнему сообщению
             adapter?.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
                 override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                     super.onItemRangeInserted(positionStart, itemCount)
@@ -101,7 +97,6 @@ class HealthyChatFragment : Fragment() {
 
             Log.d(TAG, "onViewCreated: RecyclerView configured")
 
-            // Приветственное сообщение (только если нет сохраненных сообщений)
             if (messages.isEmpty()) {
                 val welcomeMessage = ChatMessage(
                     text = "Привет, я Healthy. Я помогаю разбираться с вопросами про тело, настроение и здоровье. Расскажи в двух‑трёх фразах, что тебя больше всего беспокоит сейчас?",
@@ -113,12 +108,10 @@ class HealthyChatFragment : Fragment() {
                 Log.d(TAG, "onViewCreated: welcome message added")
             }
 
-            // Кнопка отправки
             binding.btnSend.setOnClickListener {
                 sendMessage()
             }
 
-            // Отправка по Enter
             binding.etMessage.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
                     sendMessage()
@@ -151,7 +144,6 @@ class HealthyChatFragment : Fragment() {
                 return
             }
 
-            // Проверка подписки (триал или активная подписка)
             val allowed = subscriptionManager.isSubscriptionActive()
             if (!allowed) {
                 requireActivity().runOnUiThread { showSubscriptionDialog() }
@@ -428,15 +420,15 @@ class HealthyChatFragment : Fragment() {
             .setTitle("Premium — полный доступ")
             .setMessage("""
                 Две недели бесплатно закончились.
-                
+
                 Продолжайте пользоваться Healthy без ограничений:
                 • AI-врач и психолог 24/7
                 • Трекеры питания, сна, настроения
-                
-                Подписка в Ru Store — $price ₽/мес. Без автопродлений, отмена в один тап.
+
+                Подписка $price ₽/мес. Без автопродлений.
             """.trimIndent())
-            .setPositiveButton("Купить ($price ₽)") { _, _ ->
-                billingManager.launchPurchaseFlow(requireActivity())
+            .setPositiveButton("Оформить подписку") { _, _ ->
+                Toast.makeText(requireContext(), "Подписка будет доступна в следующей версии", Toast.LENGTH_LONG).show()
             }
             .setNegativeButton("Позже", null)
             .show()

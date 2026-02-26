@@ -5,4 +5,3 @@ data class ChatMessage(
     val isFromUser: Boolean,
     val timestamp: Long = System.currentTimeMillis()
 )
-

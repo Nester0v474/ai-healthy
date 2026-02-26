@@ -1,6 +1,3 @@
-// backend/server.js
-// Я — сервер-прокси для DeepSeek API. Принимаю запросы от приложения и пересылаю их к ИИ.
-
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
@@ -9,11 +6,9 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Разрешаю запросы с любого источника (приложение на телефоне)
 app.use(cors());
 app.use(express.json());
 
-// Логирую все входящие запросы, чтобы я мог отлаживать
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
     if (req.body && Object.keys(req.body).length > 0) {
@@ -23,7 +18,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// Беру ключ DeepSeek из .env — никогда не храню его в коде
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 if (!DEEPSEEK_API_KEY) {
     console.error('ERROR: DEEPSEEK_API_KEY not set in .env file. Create .env with DEEPSEEK_API_KEY=your_key');
@@ -31,11 +25,10 @@ if (!DEEPSEEK_API_KEY) {
 }
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
-// Обрабатываю сообщения чата: получаю от приложения и пересылаю в DeepSeek
 app.post('/api/chat', async (req, res) => {
     try {
         const { model, messages, temperature, max_tokens, stream } = req.body;
-        
+
         if (!messages || !Array.isArray(messages) || messages.length === 0) {
             return res.status(400).json({
                 error: {
@@ -45,8 +38,7 @@ app.post('/api/chat', async (req, res) => {
                 }
             });
         }
-        
-        // Формирую запрос к DeepSeek API
+
         const requestBody = {
             model: model || 'deepseek-chat',
             messages: messages,
@@ -54,9 +46,9 @@ app.post('/api/chat', async (req, res) => {
             max_tokens: max_tokens || 2000,
             stream: stream || false
         };
-        
+
         console.log(`Making request to DeepSeek API: ${DEEPSEEK_API_URL}`);
-        
+
         const response = await axios.post(
             DEEPSEEK_API_URL,
             requestBody,
@@ -68,12 +60,12 @@ app.post('/api/chat', async (req, res) => {
                 timeout: 60000
             }
         );
-        
+
         res.json(response.data);
     } catch (error) {
         console.error('DeepSeek API Error:', error.message);
         console.error('Error stack:', error.stack);
-        
+
         if (error.response) {
             console.error('DeepSeek API Response Error:', {
                 status: error.response.status,
@@ -109,7 +101,6 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
-// Проверка: отвечаю, что я жив и работаю
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });

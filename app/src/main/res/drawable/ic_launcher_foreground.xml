@@ -4,7 +4,7 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Лаконичная иконка Healthy: буква H и сердцебиение -->
+    
     <path
         android:fillColor="#00695C"
         android:pathData="M30,32h10v44h-10z" />

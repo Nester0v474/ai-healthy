@@ -21,7 +21,7 @@ class ReminderReceiver : BroadcastReceiver() {
     }
 
     private fun showNotification(context: Context, title: String) {
-        val channelId = "reminder_channel_sound" // Новый ID для канала со звуком
+        val channelId = "reminder_channel_sound"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val audioAttributes = AudioAttributes.Builder()
@@ -52,8 +52,8 @@ class ReminderReceiver : BroadcastReceiver() {
             .setContentText(title)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH) // Высокий приоритет для старых версий
-            .setDefaults(NotificationCompat.DEFAULT_ALL) // Включает стандартный звук, вибрацию и индикатор
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
             .build()
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         manager.notify(System.currentTimeMillis().toInt(), notification)

@@ -10,19 +10,19 @@ data class SleepEntry(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long = 0,
-    
+
     @ColumnInfo(name = "date")
     val date: LocalDate,
-    
+
     @ColumnInfo(name = "bedTime")
-    val bedTime: String, // "HH:mm"
-    
+    val bedTime: String,
+
     @ColumnInfo(name = "wakeTime")
-    val wakeTime: String, // "HH:mm"
-    
+    val wakeTime: String,
+
     @ColumnInfo(name = "quality")
-    val quality: Int = 3, // 1-5
-    
+    val quality: Int = 3,
+
     @ColumnInfo(name = "note")
     val note: String? = null
 )

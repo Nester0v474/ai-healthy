@@ -21,13 +21,13 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 
 class MoodLogFragment : Fragment() {
-    
+
     private var _binding: FragmentMoodLogBinding? = null
     private val binding get() = _binding!!
-    
+
     private lateinit var viewModel: MoodViewModel
     private lateinit var adapter: MoodEntryAdapter
-    
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,35 +36,32 @@ class MoodLogFragment : Fragment() {
         _binding = FragmentMoodLogBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         try {
             val context = requireContext().applicationContext
-            // Инициализация ViewModel
+
             val database = FoodDatabase.getDatabase(context)
             val repository = MoodRepository(database)
             val factory = MoodViewModelFactory(repository)
             viewModel = ViewModelProvider(this, factory)[MoodViewModel::class.java]
         } catch (e: Exception) {
-            // Обработка ошибок инициализации
+
             android.util.Log.e("MoodLogFragment", "Ошибка инициализации", e)
             android.util.Log.e("MoodLogFragment", "Stack trace", e)
             return
         }
-        
-        // Настройка RecyclerView
+
         adapter = MoodEntryAdapter { moodEntryId ->
             viewModel.deleteMoodEntry(moodEntryId)
         }
         binding.rvMoodEntries.layoutManager = LinearLayoutManager(requireContext())
         binding.rvMoodEntries.adapter = adapter
-        
-        // Настройка графика
+
         setupChart()
-        
-        // Наблюдение за данными
+
         viewModel.weeklyMoodData.observe(viewLifecycleOwner) { dataPoints ->
             dataPoints?.let {
                 if (it.isNotEmpty()) {
@@ -72,73 +69,67 @@ class MoodLogFragment : Fragment() {
                 }
             }
         }
-        
+
         viewModel.recentEntries.observe(viewLifecycleOwner) { entries ->
             adapter.submitList(entries ?: emptyList())
         }
-        
+
         viewModel.hasTodayEntry.observe(viewLifecycleOwner) { hasEntry ->
             binding.cardReminder.visibility = if (hasEntry == true) View.GONE else View.VISIBLE
         }
-        
-        // Кнопка добавления записи
+
         binding.btnAddMood.setOnClickListener {
             showAddMoodDialog()
         }
     }
-    
+
     private fun setupChart() {
         val chart = binding.chartMood
-        
-        // Базовая настройка графика
+
         chart.description.isEnabled = false
         chart.setTouchEnabled(true)
         chart.setDragEnabled(true)
         chart.setScaleEnabled(true)
         chart.setPinchZoom(false)
         chart.setDrawGridBackground(false)
-        
-        // Настройка легенды
+
         chart.legend.isEnabled = false
-        
-        // Настройка оси X
+
         val xAxis = chart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.setDrawGridLines(false)
         xAxis.granularity = 1f
         xAxis.labelCount = 7
-        
-        // Настройка оси Y
+
         val leftAxis = chart.axisLeft
         leftAxis.axisMinimum = 0f
         leftAxis.axisMaximum = 5f
         leftAxis.granularity = 1f
         leftAxis.setDrawGridLines(true)
         leftAxis.setDrawZeroLine(false)
-        
+
         val rightAxis = chart.axisRight
         rightAxis.isEnabled = false
-        
-        // Отключение анимации при первом отображении
+
         chart.animateX(500)
     }
-    
+
     private fun updateChart(dataPoints: List<MoodViewModel.MoodDataPoint>) {
         if (_binding == null) {
             return
         }
-        
+
         try {
             val entries = mutableListOf<Entry>()
-            
+
             dataPoints.forEachIndexed { index, point ->
                 entries.add(Entry(index.toFloat(), point.moodScore))
             }
-            
+
             if (entries.isEmpty()) {
                 return
             }
-            
+
             val dataSet = LineDataSet(entries, "Настроение")
             val color = androidx.core.content.ContextCompat.getColor(requireContext(), android.R.color.holo_blue_dark)
             dataSet.color = color
@@ -150,11 +141,10 @@ class MoodLogFragment : Fragment() {
             dataSet.valueTextSize = 10f
             dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
             dataSet.cubicIntensity = 0.2f
-            
+
             val lineData = LineData(dataSet)
             binding.chartMood.data = lineData
-            
-            // Настройка подписей оси X
+
             val xAxis = binding.chartMood.xAxis
             xAxis.valueFormatter = object : ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
@@ -165,19 +155,19 @@ class MoodLogFragment : Fragment() {
                     return ""
                 }
             }
-            
+
             binding.chartMood.invalidate()
         } catch (e: Exception) {
-            // Игнорируем ошибки при обновлении графика
+
         }
     }
-    
+
     private fun showAddMoodDialog() {
         try {
             if (!::viewModel.isInitialized) {
                 return
             }
-            
+
             val dialog = AddMoodDialogFragment.newInstance { moodScore, note ->
                 if (::viewModel.isInitialized) {
                     viewModel.addMoodEntry(moodScore, note)
@@ -185,13 +175,12 @@ class MoodLogFragment : Fragment() {
             }
             dialog.show(parentFragmentManager, "AddMoodDialog")
         } catch (e: Exception) {
-            // Игнорируем ошибки при показе диалога
+
         }
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
-

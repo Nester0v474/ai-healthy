@@ -14,27 +14,22 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class HealthyTaskViewModel(private val repository: HealthyTaskRepository) : ViewModel() {
-    
-    // LiveData для всех записей
+
     private val _allHealthyTaskEntries = MutableLiveData<List<HealthyTaskEntry>>(emptyList())
     val allHealthyTaskEntries: LiveData<List<HealthyTaskEntry>> = _allHealthyTaskEntries
-    
-    // LiveData для активных записей (не выполненных)
+
     private val _activeHealthyTaskEntries = MutableLiveData<List<HealthyTaskEntry>>(emptyList())
     val activeHealthyTaskEntries: LiveData<List<HealthyTaskEntry>> = _activeHealthyTaskEntries
-    
-    // LiveData для выполненных записей
+
     private val _completedHealthyTaskEntries = MutableLiveData<List<HealthyTaskEntry>>(emptyList())
     val completedHealthyTaskEntries: LiveData<List<HealthyTaskEntry>> = _completedHealthyTaskEntries
-    
-    // StateFlow для ошибок
+
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
-    
-    // StateFlow для фильтра (all, active, completed)
+
     private val _filter = MutableStateFlow("all")
     val filter: StateFlow<String> = _filter.asStateFlow()
-    
+
     init {
         try {
             loadAllEntries()
@@ -45,7 +40,7 @@ class HealthyTaskViewModel(private val repository: HealthyTaskRepository) : View
             _error.value = "Ошибка инициализации: ${e.message}"
         }
     }
-    
+
     private fun loadAllEntries() {
         viewModelScope.launch {
             try {
@@ -58,7 +53,7 @@ class HealthyTaskViewModel(private val repository: HealthyTaskRepository) : View
             }
         }
     }
-    
+
     private fun loadActiveEntries() {
         viewModelScope.launch {
             try {
@@ -71,7 +66,7 @@ class HealthyTaskViewModel(private val repository: HealthyTaskRepository) : View
             }
         }
     }
-    
+
     private fun loadCompletedEntries() {
         viewModelScope.launch {
             try {
@@ -84,7 +79,7 @@ class HealthyTaskViewModel(private val repository: HealthyTaskRepository) : View
             }
         }
     }
-    
+
     fun addHealthyTaskEntry(title: String, description: String?) {
         viewModelScope.launch {
             try {
@@ -92,14 +87,14 @@ class HealthyTaskViewModel(private val repository: HealthyTaskRepository) : View
                     _error.value = "Название не может быть пустым"
                     return@launch
                 }
-                
+
                 val healthyTaskEntry = HealthyTaskEntry(
                     date = LocalDate.now(),
                     title = title.trim(),
                     description = description?.takeIf { it.isNotBlank() }?.trim(),
                     isCompleted = false
                 )
-                
+
                 repository.insertHealthyTaskEntry(healthyTaskEntry)
                 _error.value = null
             } catch (e: Exception) {
@@ -107,7 +102,7 @@ class HealthyTaskViewModel(private val repository: HealthyTaskRepository) : View
             }
         }
     }
-    
+
     fun updateHealthyTaskEntry(healthyTaskEntry: HealthyTaskEntry) {
         viewModelScope.launch {
             try {
@@ -118,7 +113,7 @@ class HealthyTaskViewModel(private val repository: HealthyTaskRepository) : View
             }
         }
     }
-    
+
     fun deleteHealthyTaskEntry(id: Long) {
         viewModelScope.launch {
             try {
@@ -128,7 +123,7 @@ class HealthyTaskViewModel(private val repository: HealthyTaskRepository) : View
             }
         }
     }
-    
+
     fun toggleCompletionStatus(id: Long, isCompleted: Boolean) {
         viewModelScope.launch {
             try {
@@ -138,7 +133,7 @@ class HealthyTaskViewModel(private val repository: HealthyTaskRepository) : View
             }
         }
     }
-    
+
     fun setFilter(filter: String) {
         _filter.value = filter
     }
@@ -153,4 +148,3 @@ class HealthyTaskViewModelFactory(private val repository: HealthyTaskRepository)
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-

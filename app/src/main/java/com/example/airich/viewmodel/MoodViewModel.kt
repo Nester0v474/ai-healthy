@@ -17,25 +17,21 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class MoodViewModel(private val repository: MoodRepository) : ViewModel() {
-    
-    // LiveData для данных за последние 7 дней (для графика)
+
     private val _weeklyMoodData = MutableLiveData<List<MoodDataPoint>>(emptyList())
     val weeklyMoodData: LiveData<List<MoodDataPoint>> = _weeklyMoodData
-    
-    // LiveData для последних записей
+
     private val _recentEntries = MutableLiveData<List<MoodEntry>>(emptyList())
     val recentEntries: LiveData<List<MoodEntry>> = _recentEntries
-    
-    // LiveData для проверки записи за сегодня
+
     private val _hasTodayEntry = MutableLiveData<Boolean>(false)
     val hasTodayEntry: LiveData<Boolean> = _hasTodayEntry
-    
-    // StateFlow для ошибок
+
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
-    
+
     init {
-        // Отложенная инициализация для предотвращения краша при запуске
+
         try {
             loadWeeklyData()
             loadRecentEntries()
@@ -45,7 +41,7 @@ class MoodViewModel(private val repository: MoodRepository) : ViewModel() {
             _error.value = "Ошибка инициализации: ${e.message}"
         }
     }
-    
+
     private fun loadWeeklyData() {
         viewModelScope.launch {
             try {
@@ -59,7 +55,7 @@ class MoodViewModel(private val repository: MoodRepository) : ViewModel() {
             }
         }
     }
-    
+
     private fun loadRecentEntries() {
         viewModelScope.launch {
             try {
@@ -72,7 +68,7 @@ class MoodViewModel(private val repository: MoodRepository) : ViewModel() {
             }
         }
     }
-    
+
     private fun checkTodayEntry() {
         viewModelScope.launch {
             try {
@@ -84,7 +80,7 @@ class MoodViewModel(private val repository: MoodRepository) : ViewModel() {
             }
         }
     }
-    
+
     fun addMoodEntry(moodScore: Int, note: String?) {
         viewModelScope.launch {
             try {
@@ -92,13 +88,13 @@ class MoodViewModel(private val repository: MoodRepository) : ViewModel() {
                     _error.value = "Оценка настроения должна быть от 1 до 5"
                     return@launch
                 }
-                
+
                 val moodEntry = MoodEntry(
                     date = LocalDate.now(),
                     moodScore = moodScore,
                     note = note?.takeIf { it.isNotBlank() }
                 )
-                
+
                 repository.insertMoodEntry(moodEntry)
                 _error.value = null
                 checkTodayEntry()
@@ -107,7 +103,7 @@ class MoodViewModel(private val repository: MoodRepository) : ViewModel() {
             }
         }
     }
-    
+
     fun deleteMoodEntry(id: Long) {
         viewModelScope.launch {
             try {
@@ -118,23 +114,17 @@ class MoodViewModel(private val repository: MoodRepository) : ViewModel() {
             }
         }
     }
-    
-    /**
-     * Генерирует точки данных для графика за последние 7 дней
-     * Если записи нет на какой-то день, значение будет 0
-     */
+
     private fun generateWeeklyDataPoints(entries: List<MoodEntry>): List<MoodDataPoint> {
         val today = LocalDate.now()
         val dataPoints = mutableListOf<MoodDataPoint>()
-        
-        // Создаем карту дата -> запись для быстрого поиска
+
         val entriesMap = entries.associateBy { it.date }
-        
-        // Генерируем точки для последних 7 дней
+
         for (i in 6 downTo 0) {
             val date = today.minusDays(i.toLong())
             val entry = entriesMap[date]
-            
+
             val dayName = when (date.dayOfWeek) {
                 DayOfWeek.MONDAY -> "Пн"
                 DayOfWeek.TUESDAY -> "Вт"
@@ -144,7 +134,7 @@ class MoodViewModel(private val repository: MoodRepository) : ViewModel() {
                 DayOfWeek.SATURDAY -> "Сб"
                 DayOfWeek.SUNDAY -> "Вс"
             }
-            
+
             dataPoints.add(
                 MoodDataPoint(
                     dayName = dayName,
@@ -154,14 +144,14 @@ class MoodViewModel(private val repository: MoodRepository) : ViewModel() {
                 )
             )
         }
-        
+
         return dataPoints
     }
-    
+
     data class MoodDataPoint(
         val dayName: String,
         val date: LocalDate,
-        val moodScore: Float, // 0 если записи нет
+        val moodScore: Float,
         val hasEntry: Boolean
     )
 }
@@ -175,4 +165,3 @@ class MoodViewModelFactory(private val repository: MoodRepository) : ViewModelPr
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-

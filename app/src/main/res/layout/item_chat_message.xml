@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="8dp">
 
-    <!-- Сообщение пользователя (справа) -->
+    
     <LinearLayout
         android:id="@+id/layoutUserMessage"
         android:layout_width="match_parent"
@@ -62,7 +62,7 @@
 
     </LinearLayout>
 
-    <!-- Сообщение AI (слева) -->
+    
     <LinearLayout
         android:id="@+id/layoutAiMessage"
         android:layout_width="match_parent"

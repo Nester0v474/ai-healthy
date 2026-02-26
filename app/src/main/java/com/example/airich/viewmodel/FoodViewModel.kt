@@ -16,27 +16,23 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class FoodViewModel(private val repository: FoodRepository) : ViewModel() {
-    
-    // LiveData для списка записей о еде за сегодня
+
     private val _mealEntries = MutableLiveData<List<MealEntryWithFood>>(emptyList())
     val mealEntries: LiveData<List<MealEntryWithFood>> = _mealEntries
-    
-    // StateFlow для поиска продуктов
+
     private val _searchResults = MutableStateFlow<List<FoodItem>>(emptyList())
     val searchResults: StateFlow<List<FoodItem>> = _searchResults.asStateFlow()
-    
-    // LiveData для сводки по калориям и БЖУ
+
     private val _dailySummary = MutableLiveData<DailySummary>(
         DailySummary(calories = 0.0, protein = 0.0, carbs = 0.0, fat = 0.0)
     )
     val dailySummary: LiveData<DailySummary> = _dailySummary
-    
-    // LiveData для ошибок
+
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
-    
+
     init {
-        // Отложенная инициализация для предотвращения краша при запуске
+
         try {
             loadTodayMeals()
             initializeFoodDatabase()
@@ -45,7 +41,7 @@ class FoodViewModel(private val repository: FoodRepository) : ViewModel() {
             _error.value = "Ошибка инициализации: ${e.message}"
         }
     }
-    
+
     private fun loadTodayMeals() {
         viewModelScope.launch {
             try {
@@ -60,13 +56,13 @@ class FoodViewModel(private val repository: FoodRepository) : ViewModel() {
             }
         }
     }
-    
+
     private fun updateDailySummary(entries: List<MealEntryWithFood>) {
         val totalCalories = entries.sumOf { it.totalCalories }
         val totalProtein = entries.sumOf { it.totalProtein }
         val totalCarbs = entries.sumOf { it.totalCarbs }
         val totalFat = entries.sumOf { it.totalFat }
-        
+
         _dailySummary.value = DailySummary(
             calories = totalCalories,
             protein = totalProtein,
@@ -74,7 +70,7 @@ class FoodViewModel(private val repository: FoodRepository) : ViewModel() {
             fat = totalFat
         )
     }
-    
+
     fun searchFoodItems(query: String) {
         viewModelScope.launch {
             if (query.isBlank()) {
@@ -86,11 +82,11 @@ class FoodViewModel(private val repository: FoodRepository) : ViewModel() {
             }
         }
     }
-    
+
     suspend fun insertFoodItem(foodItem: FoodItem): Long {
         return repository.insertFoodItem(foodItem)
     }
-    
+
     fun addMealEntry(foodId: Long, mealType: MealType, amountInGrams: Double) {
         viewModelScope.launch {
             try {
@@ -99,14 +95,14 @@ class FoodViewModel(private val repository: FoodRepository) : ViewModel() {
                     _error.value = "Продукт не найден"
                     return@launch
                 }
-                
+
                 val mealEntry = MealEntry(
                     date = repository.getTodayTimestamp(),
                     mealType = mealType,
                     foodId = foodId,
                     amountInGrams = amountInGrams
                 )
-                
+
                 repository.insertMealEntry(mealEntry)
                 _error.value = null
             } catch (e: Exception) {
@@ -114,7 +110,7 @@ class FoodViewModel(private val repository: FoodRepository) : ViewModel() {
             }
         }
     }
-    
+
     fun deleteMealEntry(id: Long) {
         viewModelScope.launch {
             try {
@@ -124,13 +120,13 @@ class FoodViewModel(private val repository: FoodRepository) : ViewModel() {
             }
         }
     }
-    
+
     private fun initializeFoodDatabase() {
         viewModelScope.launch {
             try {
-                // Проверяем, есть ли уже продукты в базе
+
                 if (repository.getFoodItemCount() == 0) {
-                // Добавляем предзаполненные продукты
+
                 val defaultFoods = listOf(
                     FoodItem(name = "Куриная грудка", caloriesPer100g = 165.0, protein = 31.0, carbs = 0.0, fat = 3.6),
                     FoodItem(name = "Рис вареный", caloriesPer100g = 130.0, protein = 2.7, carbs = 28.0, fat = 0.3),
@@ -150,7 +146,7 @@ class FoodViewModel(private val repository: FoodRepository) : ViewModel() {
             }
         }
     }
-    
+
     data class DailySummary(
         val calories: Double,
         val protein: Double,
@@ -168,4 +164,3 @@ class FoodViewModelFactory(private val repository: FoodRepository) : ViewModelPr
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-

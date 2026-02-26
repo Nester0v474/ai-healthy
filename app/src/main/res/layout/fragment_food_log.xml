@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Сводка по калориям и БЖУ -->
+        
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Список приемов пищи -->
+        
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
 
     </LinearLayout>
 
-    <!-- FAB для добавления новой записи -->
+    
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddMeal"
         android:layout_width="wrap_content"

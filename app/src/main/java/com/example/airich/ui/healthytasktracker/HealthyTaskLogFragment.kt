@@ -16,13 +16,13 @@ import com.example.airich.viewmodel.HealthyTaskViewModelFactory
 import kotlinx.coroutines.launch
 
 class HealthyTaskLogFragment : Fragment() {
-    
+
     private var _binding: FragmentHealthyTaskLogBinding? = null
     private val binding get() = _binding!!
-    
+
     private lateinit var viewModel: HealthyTaskViewModel
     private lateinit var adapter: HealthyTaskEntryAdapter
-    
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -31,13 +31,13 @@ class HealthyTaskLogFragment : Fragment() {
         _binding = FragmentHealthyTaskLogBinding.inflate(inflater, container, false)
         return binding.root
     }
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
+
         try {
             val context = requireContext().applicationContext
-            // Инициализация ViewModel
+
             val database = FoodDatabase.getDatabase(context)
             val repository = HealthyTaskRepository(database)
             val factory = HealthyTaskViewModelFactory(repository)
@@ -46,8 +46,7 @@ class HealthyTaskLogFragment : Fragment() {
             android.util.Log.e("HealthyTaskLogFragment", "Ошибка инициализации", e)
             return
         }
-        
-        // Настройка RecyclerView
+
         adapter = HealthyTaskEntryAdapter(
             onToggleComplete = { id, isCompleted ->
                 viewModel.toggleCompletionStatus(id, isCompleted)
@@ -58,57 +57,53 @@ class HealthyTaskLogFragment : Fragment() {
         )
         binding.rvHealthyTaskEntries.layoutManager = LinearLayoutManager(requireContext())
         binding.rvHealthyTaskEntries.adapter = adapter
-        
-        // Настройка фильтров
+
         setupFilters()
-        
-        // Наблюдение за данными
+
         viewModel.allHealthyTaskEntries.observe(viewLifecycleOwner) { entries ->
             updateList()
         }
-        
+
         viewModel.activeHealthyTaskEntries.observe(viewLifecycleOwner) { entries ->
             updateList()
         }
-        
+
         viewModel.completedHealthyTaskEntries.observe(viewLifecycleOwner) { entries ->
             updateList()
         }
-        
-        // Наблюдение за фильтром через StateFlow
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.filter.collect { filter ->
                 updateFilterButtons(filter)
                 updateList()
             }
         }
-        
-        // Кнопка добавления записи
+
         binding.btnAddHealthyTask.setOnClickListener {
             showAddHealthyTaskDialog()
         }
     }
-    
+
     private fun setupFilters() {
         binding.btnFilterAll.setOnClickListener {
             viewModel.setFilter("all")
         }
-        
+
         binding.btnFilterActive.setOnClickListener {
             viewModel.setFilter("active")
         }
-        
+
         binding.btnFilterCompleted.setOnClickListener {
             viewModel.setFilter("completed")
         }
     }
-    
+
     private fun updateFilterButtons(selectedFilter: String) {
         binding.btnFilterAll.isSelected = selectedFilter == "all"
         binding.btnFilterActive.isSelected = selectedFilter == "active"
         binding.btnFilterCompleted.isSelected = selectedFilter == "completed"
     }
-    
+
     private fun updateList() {
         val filter = viewModel.filter.value ?: "all"
         val entries = when (filter) {
@@ -117,8 +112,7 @@ class HealthyTaskLogFragment : Fragment() {
             else -> viewModel.allHealthyTaskEntries.value ?: emptyList()
         }
         adapter.submitList(entries)
-        
-        // Показываем/скрываем сообщение о пустом списке
+
         if (entries.isEmpty()) {
             binding.tvEmptyList.visibility = View.VISIBLE
             binding.rvHealthyTaskEntries.visibility = View.GONE
@@ -127,13 +121,13 @@ class HealthyTaskLogFragment : Fragment() {
             binding.rvHealthyTaskEntries.visibility = View.VISIBLE
         }
     }
-    
+
     private fun showAddHealthyTaskDialog() {
         try {
             if (!::viewModel.isInitialized) {
                 return
             }
-            
+
             val dialog = AddHealthyTaskDialogFragment.newInstance { title, description ->
                 if (::viewModel.isInitialized) {
                     viewModel.addHealthyTaskEntry(title, description)
@@ -144,10 +138,9 @@ class HealthyTaskLogFragment : Fragment() {
             android.util.Log.e("HealthyTaskLogFragment", "Ошибка показа диалога", e)
         }
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 }
-
