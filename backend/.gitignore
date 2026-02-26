@@ -1,4 +1,3 @@
-# Игнорируемые файлы для backend
 node_modules/
 .env
 *.log
