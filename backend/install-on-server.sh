@@ -1,7 +1,4 @@
 #!/bin/bash
-# Запуск на сервере: скопируй этот файл на сервер и выполни:
-#   bash install-on-server.sh
-# Или скопируй всё содержимое и вставь в SSH-сессию.
 
 set -e
 mkdir -p /root/backend

@@ -1,5 +1,5 @@
 @echo off
-cd /d "C:\Ai Healthy"
+cd /d "%~dp0"
 set GIT="C:\Program Files\Git\bin\git.exe"
 %GIT% add -A
 %GIT% commit -m "Update" 2>nul

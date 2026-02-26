@@ -1,4 +1,3 @@
-# Я описываю контейнеры для запуска через Docker Compose
 version: '3.8'
 
 services:
